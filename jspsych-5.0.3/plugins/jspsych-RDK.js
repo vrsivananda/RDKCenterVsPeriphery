@@ -59,6 +59,11 @@ jsPsych.plugins["RDK"] = (function() {
 		trial.reinsert_type = trial.reinsert_type || 2;
 		trial.aperture_center_x = trial.aperture_center_x || window.innerWidth/2;
 		trial.aperture_center_y = trial.aperture_center_y || window.innerHeight/2;
+		trial.fixation_cross = trial.fixation_cross || false; 
+		trial.fixation_cross_width = trial.fixation_cross_width || 20; 
+		trial.fixation_cross_height = trial.fixation_cross_height || 20; 
+		trial.fixation_cross_color = trial.fixation_cross_color || "black";
+		trial.fixation_cross_thickness = trial.fixation_cross_thickness || 1; 
 		
 		//Coherence can be zero, but logical operators evaluate it to false. So we do it manually
 		if(typeof trial.coherence === 'undefined'){
@@ -94,16 +99,21 @@ jsPsych.plugins["RDK"] = (function() {
 
 		/* RDK type parameter
 		** See Fig. 1 in Scase, Braddick, and Raymond (1996) for a visual depiction of these different signal selection rules and noise types
+
 		-------------------
 		SUMMARY:
+
 		Signal Selection rule:
 		-Same: Each dot is designated to be either a coherent dot (signal) or incoherent dot (noise) and will remain so throughout all frames in the display. Coherent dots will always move in the direction of coherent motion in all frames.
 		-Different: Each dot can be either a coherent dot (signal) or incoherent dot (noise) and will be designated randomly (weighted based on the coherence level) at each frame. Only the dots that are designated to be coherent dots will move in the direction of coherent motion, but only in that frame. In the next frame, each dot will be designated randomly again on whether it is a coherent or incoherent dot.
+
 		Noise Type:
 		-Random position: The incoherent dots appear in a random location in the aperture in each frame
 		-Random walk: The incoherent dots will move in a random direction (designated randomly in each frame) in each frame.
 		-Random direction: Each incoherent dot has its own alternative direction of motion (designated randomly at the beginning of the trial), and moves in that direction in each frame.
+
 		-------------------
+
 		 1 - same && random position
 		 2 - same && random walk
 		 3 - same && random direction
@@ -130,6 +140,13 @@ jsPsych.plugins["RDK"] = (function() {
 		2 - Appear on the opposite edge of the aperture (Random if square or rectangle, reflected about origin in circle and ellipse)
 		*/
 		var reinsertType = trial.reinsert_type;
+		
+		//Fixation Cross Parameters
+		var fixationCross = trial.fixation_cross; true; //To display or not to display the cross
+		var fixationCrossWidth = trial.fixation_cross_width;  //The width of the fixation cross in pixels
+		var fixationCrossHeight = trial.fixation_cross_height; //The height of the fixation cross in pixels
+		var fixationCrossColor = trial.fixation_cross_color; //The color of the fixation cross
+		var fixationCrossThickness = trial.fixation_cross_thickness; //The thickness of the fixation cross, must be positive number above 1
 
 
 
@@ -164,6 +181,10 @@ jsPsych.plugins["RDK"] = (function() {
 
 		//Set the canvas background color
 		canvas.style.backgroundColor = backgroundColor;
+		
+		//Draw the fixation cross now to minimize the flicker
+		drawFixationCross();
+
 
 		//--------Set up Canvas end-------
 		
@@ -491,7 +512,33 @@ jsPsych.plugins["RDK"] = (function() {
 				ctx.fillStyle = dotColor;
 				ctx.fill();
 			}
-		}
+			
+			drawFixationCross();
+      
+		}//End of draw
+		
+		//Function to draw the fixation cross
+		function drawFixationCross(){
+			//Draw the fixation cross if we want it
+		    if(fixationCross === true){
+		      
+		      //Horizontal line
+		      ctx.beginPath();
+		      ctx.lineWidth = fixationCrossThickness;
+		      ctx.moveTo(width/2 - fixationCrossWidth, height/2);
+		      ctx.lineTo(width/2 + fixationCrossWidth, height/2);
+		      ctx.fillStyle = fixationCrossColor;
+		      ctx.stroke();
+		      
+		      //Vertical line
+		      ctx.beginPath();
+		      ctx.lineWidth = fixationCrossThickness;
+		      ctx.moveTo(width/2, height/2 - fixationCrossHeight);
+		      ctx.lineTo(width/2, height/2 + fixationCrossHeight);
+		      ctx.fillStyle = fixationCrossColor;
+		      ctx.stroke();
+		    }
+		}//End of drawFixationCross
 
 		//Update the dots with their new location
 		function updateDots() {
