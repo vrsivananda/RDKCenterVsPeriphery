@@ -24,12 +24,15 @@
 		var trialDuration = 200;
 		var trialsPerCondition = 1; //Each "Condition" has 4 center, 2 left, and 2 right = 8 trials
 		var RDKType = 3;
+		var apertureType = 1; //1 is circle, 2 is ellipse
+		var apertureWidth = 400; //If circle, this is used for radius
+		var apertureHeight = 400;
 		var numberOfDots = 200;
 		var currentCoherence = 0.7; //Starting coherence
 		var choices = [];
 		var coherentDirection_left = 180; //Left and right corresponds to the scale on similarity which ranges from left to right (0 to 100)
 		var coherentDirection_right = 0;
-		var peripheryDistanceFromCenter = 300; //The distance of the center of periphery apertures from the center of screen, in pixels
+		var peripheryDistanceFromCenter = 400; //The distance of the center of periphery apertures from the center of screen, in pixels
 		
 		//Timing parameters
 		var timingPostTrialText = 1000;
@@ -92,7 +95,10 @@
 			number_of_dots: numberOfDots, //Total number of dots in the aperture
 			RDK_type: RDKType, //The type of RDK used
 			trial_duration: trialDuration, //Duration of each trial in ms
-			fixation_cross: fixationCross //Whether or not here is a fixation cross
+			fixation_cross: fixationCross, //Whether or not here is a fixation cross
+			aperture_type: apertureType,
+			aperture_height: apertureHeight,
+			aperture_width: apertureWidth,
 		};
 		
 		
@@ -107,15 +113,11 @@
 		
 		var trialCounter = 0; //[sivaHack]
 		
-		//Variables for width and height of canvas
-		var windowWidth = window.innerWidth;
-		var windowHeight = window.innerHeight;
-		
 		//Change the body element to be the same color as the stimuli background
 		document.getElementsByTagName("body")[0].style.background = "gray";
 		
 		//Set the fake stimuli such that the slider is below the aperture
-		var fakeStimuli = "<div style = 'height: " + (windowHeight/2)+ "px; width: 700px;'></div>"; //This adjusts how high the slider is on the screen. Increase the height of the fake stimuli to push the slider down. Decrease the height to move the slider up.
+		var fakeStimuli = "<div style = 'height: " + (window.innerHeight/2)+ "px; width: 700px;'></div>"; //This adjusts how high the slider is on the screen. Increase the height of the fake stimuli to push the slider down. Decrease the height to move the slider up.
 		
 		//----------Make practice trials----------
 		
@@ -182,7 +184,6 @@
 		main_timeline = main_timeline.concat(makeTextBeforeActualTrials()); //Transition to actual trials
 		main_timeline = main_timeline.concat(allActualTrials); //Actual trials
 		main_timeline = main_timeline.concat(makeSurvey()); //Survey
-		main_timeline = main_timeline.concat(makeTextAfterAllTrials()); //Transition to end the experiment
 		main_timeline = insertFixationCrossBeforeRDK(main_timeline); //Insert the fixation crosses before all RDKs
 		
 		
@@ -255,6 +256,12 @@
 				"Press any key to begin the practice trials." +
 				closeText;
 			
+			//Add the space to the top if there is space
+			text1 = addSpaceToTop(text1);
+			text2 = addSpaceToTop(text2);
+			text3 = addSpaceToTop(text3);
+			text4 = addSpaceToTop(text4);
+			
 			//The block of instructions containing all the pages of text above
 			var instructions_block = {
 				type: 'text',
@@ -272,41 +279,54 @@
 		
 		//Function to make the text between the easy and hard practice trials
 		function makeTextBetweenEasyCenterAndPeripheryPracticeTrials(){
-						
+			
+			//Create the text string
+			var text = lineSkip + openText +
+				"Great work! Those were the practice trials with the dots in the center. There will also be trials where dots are near the sides of your screen. These trials are likely to be more difficult than those with the dots in the center." +
+				closeText + lineSkip + openText +
+				"We know it is tempting to look at the dots at the sides of the screen. But remember: Always start with your eyes at the fixation cross and keep it there until it disappears from the screen, even when the dots are being presented." +
+				closeText + lineSkip + openText +
+				"Remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
+				closeText + lineSkip + openText +
+				"Press any key to continue." +
+				closeText;
+			
+			//Add the space to the top	
+			text = addSpaceToTop(text);
+			
 			//The block of text
 			var textBetweenEasyCenterAndPeripheryPracticeTrials = {
 				type: 'text',
 				timing_post_trial: timingPostTrialText,
-				text: lineSkip + openText +
-					"Great work! Those were the practice trials with the dots in the center. There will also be trials where dots are near the sides of your screen. These trials are likely to be more difficult than those with the dots in the center." +
-					closeText + lineSkip + openText +
-					"We know it is tempting to look at the dots at the sides of the screen. But remember: Always start with your eyes at the fixation cross and keep it there until it disappears from the screen, even when the dots are being presented." +
-					closeText + lineSkip + openText +
-					"Remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
-					closeText + lineSkip + openText +
-					"Press any key to continue." +
-					closeText
+				text: text
 			};
+			
 			
 			return textBetweenEasyCenterAndPeripheryPracticeTrials;
 		}
 		
 		//Function to make the text between the easy and hard practice trials
 		function makeTextBeforeBothPositionsEasyPracticeTrials(){
+			
+			//Create the text string
+			var text = lineSkip + openText +
+				"Good job! On the actual experiment, you will not know where the dots will be presented. The next few practice trials will have dots being presented either in the center or at the sides." +
+				closeText + lineSkip + openText +
+				"Remember to keep your eyes in the middle of the screen (where the fixation cross is) no matter where the dots are being presented." +
+				closeText + lineSkip + openText +
+				"Also, remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
+				closeText + lineSkip + openText +
+				"Press any key to continue." +
+				closeText;
+			
+			//Add the space to the top	
+			text = addSpaceToTop(text);
 						
 			//The block of text
 			var textBeforeBothPositionsPracticeTrials = {
 				type: 'text',
 				timing_post_trial: timingPostTrialText,
-				text: lineSkip + openText +
-					"Good job! On the actual experiment, you will not know where the dots will be presented. The next few practice trials will have dots being presented either in the center or at the sides." +
-					closeText + lineSkip + openText +
-					"Remember to keep your eyes in the middle of the screen (where the fixation cross is) no matter where the dots are being presented." +
-					closeText + lineSkip + openText +
-					"Also, remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
-					closeText + lineSkip + openText +
-					"Press any key to continue." +
-					closeText
+				text: text
 			};
 			
 			return textBeforeBothPositionsPracticeTrials;
@@ -314,20 +334,26 @@
 		
 		//Function to make the text between the easy and hard practice trials
 		function makeTextBetweenEasyAndHardPracticeTrials(){
-						
+			
+			//Create the text string
+			var text = lineSkip + openText +
+				"Great work! Those were the easy practice trials. As you progress through the experiment, trials are likely to get more difficult." +
+				closeText + lineSkip + openText +
+				"The next eight practice trials will be much harder. Try your best to determine the direction of the dots that are all moving in the same direction." +
+				closeText + lineSkip + openText +
+				"Remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
+				closeText + lineSkip + openText +
+				"Press any key to continue." +
+				closeText;
+			
+			//Add the space to the top	
+			text = addSpaceToTop(text);
+									
 			//The block of text
 			var textBetweenEasyAndHardPracticeTrials = {
 				type: 'text',
 				timing_post_trial: timingPostTrialText,
-				text: lineSkip + openText +
-					"Great work! Those were the easy practice trials. As you progress through the experiment, trials are likely to get more difficult." +
-					closeText + lineSkip + openText +
-					"The next eight practice trials will be much harder. Try your best to determine the direction of the dots that are all moving in the same direction." +
-					closeText + lineSkip + openText +
-					"Remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
-					closeText + lineSkip + openText +
-					"Press any key to continue." +
-					closeText
+				text: text
 			};
 			
 			return textBetweenEasyAndHardPracticeTrials;
@@ -336,18 +362,24 @@
 		//Function to make the text before actual trials
 		function makeTextBeforeActualTrials(){
 			
+			//Create the text string
+			var text = lineSkip + openText +
+				"Great job! You have completed all the practice trials." +
+				closeText + lineSkip + openText +
+				"We will now start the actual trials. You will not be receiving feedback for the following trials. This will take around 20 minutes to complete." +
+				closeText + lineSkip + openText +
+				"Remember to use the full range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
+				closeText + lineSkip + openText +
+				"Press any key to continue." +
+				closeText;
+			
+			//Add the space to the top	
+			text = addSpaceToTop(text);
+			
 			var textBeforeActualTrials = {
 				type: 'text',
 				timing_post_trial: timingPostTrialText,
-				text: lineSkip + openText +
-					"Great job! You have completed all the practice trials." +
-					closeText + lineSkip + openText +
-					"We will now start the actual trials. You will not be receiving feedback for the following trials. This will take around 20 minutes to complete." +
-					closeText + lineSkip + openText +
-					"Remember to use the full range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
-					closeText + lineSkip + openText +
-					"Press any key to continue." +
-					closeText
+				text: text
 			}
 			
 			return textBeforeActualTrials;
@@ -355,18 +387,24 @@
 		
 		//Function to make survey after the trials
 		function makeSurvey(){
+			
+			var text1 = lineSkip + openText +
+				"Awesome! You have completed the experiment." +
+				closeText + lineSkip + openText +
+				"We now have two simple questions to ask you. Your responses will not affect your compensation, so please be as honest as you can." +
+				closeText + lineSkip + openText +
+				"Press any key to continue." +
+				closeText;
+				
+			text1 = addSpaceToTop(text1);
+			
 			//Make the text to prompt for the survey
 			var textBeforeSurveyTrials = {
 				type: 'text',
 				timing_post_trial: timingPostTrialText,
-				text: lineSkip + openText +
-					"Awesome! You have completed the experiment." +
-					closeText + lineSkip + openText +
-					"We now have two simple questions to ask you. Your responses will not affect your compensation, so please be as honest as you can." +
-					closeText + lineSkip + openText +
-					"Press any key to continue." +
-					closeText
+				text: text1
 			};
+			
 			
 			//Make the gender survey
 			var genderSurvey = {
@@ -387,27 +425,39 @@
 				preamble: ['<h3> Question 2 </h3>']
 			};
 			
-			return [textBeforeSurveyTrials, genderSurvey, ageSurvey];
-		}
-		
-		//Function to make the text after all trials
-		function makeTextAfterAllTrials(){
+			var text2 = lineSkip + openText +
+				"Well done! You are done with the entire task!" +
+				closeText + lineSkip + openText +
+				"Thank you very much for your time in participating in our experiment. Your participation will contribute to a greater understanding of the human visual system." +
+				closeText + lineSkip + openText +
+				"Press any key to officially end the experiment and submit your HIT." +
+				closeText;
+				
+			text2 = addSpaceToTop(text2);
 			
-			var textBeforeActualTrials = {
+			//Make the text to prompt for the survey
+			var textAfterSurveyTrials = {
 				type: 'text',
 				timing_post_trial: timingPostTrialText,
-				text: lineSkip + openText +
-					"Well done! You are done with the entire task!" +
-					closeText + lineSkip + openText +
-					"Thank you very much for your time in participating in our experiment. Your participation will contribute to a greater understanding of the human visual system." +
-					closeText + lineSkip + openText +
-					"Press any key to officially end the experiment and submit your HIT." +
-					closeText
+				text: text2
 			};
 			
-			return textBeforeActualTrials;
+			return [textBeforeSurveyTrials, genderSurvey, ageSurvey, textAfterSurveyTrials];
 		}
 		
+		//Function to add space to the top of the text based on the window height
+		function addSpaceToTop(textString){
+			//The amount of space left to use
+			var spaceLeft = window.innerHeight - 700;
+			
+			//While there is still space left, then push it down further
+			while(spaceLeft > 0){
+				textString = "<h2> <br/> </h2>" + textString;
+				spaceLeft -= 100;
+			}
+			
+			return textString;
+		}
 		
 		//------Text-creation Functions End-------
 		
@@ -488,13 +538,13 @@
 			}
 			//Else if this is left, then set the aperture location
 			else if(position === "left"){
-				tempTrial.aperture_center_x = window.innerWidth/2 - peripheryDistanceFromCenter;
+				tempTrial.aperture_center_x = function(){ return(window.innerWidth/2 - peripheryDistanceFromCenter); };
 				//Log data to tag this as periphery
 				tempTrial.positionType = "periphery";
 			}
 			//Else if this is right, then set the aperture location
 			else if(position === "right"){
-				tempTrial.aperture_center_x = window.innerWidth/2 + peripheryDistanceFromCenter;
+				tempTrial.aperture_center_x = function(){ return(window.innerWidth/2 + peripheryDistanceFromCenter); };
 				//Log data to tag this as periphery
 				tempTrial.positionType = "periphery";
 			}
@@ -680,7 +730,7 @@
 								closeText;
 							}
 								
-							return returnString;
+							return addSpaceToTop(returnString);
 						}//End of text function
 					};//End of object definition
 					
@@ -696,59 +746,69 @@
 		//Function to interleave the Fixation Cross before the stimuli 
 		function insertFixationCrossBeforeRDK(mixedArray){
 			
-			//Create a canvas and attach it to the display element / body
-			var body = document.getElementsByTagName('body')[0];
-			var canvas = document.createElement('canvas');
-			body.appendChild(canvas);
-			
-						
-			//Set up the canvas
-			canvas.width = windowWidth;
-			canvas.height = windowHeight;
-			canvas.style.margin = 0;
-			canvas.style.padding = 0;
-			
-			//Get the context
-			var ctx = canvas.getContext('2d');
-			
-			//Draw the background
-			ctx.fillStyle = "gray";
-			ctx.fillRect(0, 0, windowWidth, windowHeight);
-			
-			//Draw a fixation cross
-			ctx.beginPath();
-	        ctx.lineWidth = fixationCrossThickness;
-	        ctx.moveTo(windowWidth/2 - fixationCrossWidth, windowHeight/2);
-	        ctx.lineTo(windowWidth/2 + fixationCrossWidth, windowHeight/2);
-	        ctx.fillStyle = fixationCrossColor;
-	        ctx.stroke();
-	        
-	        //Vertical line
-	        ctx.beginPath();
-	        ctx.lineWidth = fixationCrossThickness;
-	        ctx.moveTo(windowWidth/2, windowHeight/2 - fixationCrossHeight);
-	        ctx.lineTo(windowWidth/2, windowHeight/2 + fixationCrossHeight);
-	        ctx.fillStyle = fixationCrossColor;
-	        ctx.stroke();
-			
-			//Convert it to a url
-			var fixationCrossURL = canvas.toDataURL();
-			
-			//Remove the canvas from the body/display element
-			canvas.remove();
+			function makeFixationCross(){
+				//Create a canvas and attach it to the display element / body
+				var body = document.getElementsByTagName('body')[0];
+				var canvas = document.createElement('canvas'); //Global variable to be used later in the on_finish function
+				body.appendChild(canvas);
+				body.style.margin = 0;
+				body.style.padding = 0;
+				
+							
+				//Set up the canvas
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				canvas.style.margin = 0;
+				canvas.style.padding = 0;
+				
+				//Get the context
+				var ctx = canvas.getContext('2d');
+				
+				//Draw the background
+				ctx.fillStyle = "gray";
+				ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+				
+				//Draw a fixation cross
+				ctx.beginPath();
+			    ctx.lineWidth = fixationCrossThickness;
+			    ctx.moveTo(window.innerWidth/2 - fixationCrossWidth, window.innerHeight/2);
+			    ctx.lineTo(window.innerWidth/2 + fixationCrossWidth, window.innerHeight/2);
+			    ctx.fillStyle = fixationCrossColor;
+			    ctx.stroke();
+			    
+			    //Vertical line
+			    ctx.beginPath();
+			    ctx.lineWidth = fixationCrossThickness;
+			    ctx.moveTo(window.innerWidth/2, window.innerHeight/2 - fixationCrossHeight);
+			    ctx.lineTo(window.innerWidth/2, window.innerHeight/2 + fixationCrossHeight);
+			    ctx.fillStyle = fixationCrossColor;
+			    ctx.stroke();
+				
+				//Convert it to a url
+				var fixationCrossURL = canvas.toDataURL();
+				
+				//Remove the canvas from the body/display element
+				canvas.remove();
+				
+				console.log("returned: " + fixationCrossURL);
+				
+				return fixationCrossURL;
+			}
 			
 			//Create a fixation cross object
 			var fixationCrossObject = {
 				type: 'single-stim',
-				stimulus: fixationCrossURL,
+				stimulus: function(){return makeFixationCross()},
 				timing_post_trial: 0.0000001,
 				timing_response: fixationCrossDuration,
 				on_trial_start: function(){
 					//Set the body margins and padding to zero to place the image correctly
-					body.style.margin = 0;
-					body.style.padding = 0;
+					//var body = document.getElementsByTagName('body')[0];
+					//body.style.margin = 0;
+					//body.style.padding = 0;
 				},
 				on_finish: function(){
+					console.log(jsPsych.data.getLastTrialData().stimulus);
 					//Reset the margin and padding back to the original so that subsequent plugins will work well
 					//body.style.margin = "50px auto 50px auto"; //From jsPsych.css
 					//body.style.padding = "auto"; //Guess
