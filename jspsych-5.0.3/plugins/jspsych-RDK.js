@@ -155,6 +155,8 @@ jsPsych.plugins["RDK"] = (function() {
 		//--------------------------------------
 
 		//--------Set up Canvas begin-------
+		display_element.html('');
+		console.log("display_element cleared");
 		
 		//Create a canvas element and append it to the DOM
 		var canvas = document.createElement("canvas");
@@ -163,6 +165,8 @@ jsPsych.plugins["RDK"] = (function() {
 		
 		//The document body IS 'display_element' (i.e. <body class="jspsych-display-element"> .... </body> )
 		var body = document.getElementsByClassName("jspsych-display-element")[0];
+		//clear the html from the fixation cross hack at the singleStim plugin [sivaHack]
+		
 		//Remove the margins and paddings of the display_element
 		body.style.margin = 0;
 		body.style.padding = 0;
@@ -183,7 +187,7 @@ jsPsych.plugins["RDK"] = (function() {
 		canvas.style.backgroundColor = backgroundColor;
 		
 		//Draw the fixation cross now to minimize the flicker
-		drawFixationCross();
+		window.requestAnimationFrame(drawFixationCross);
 
 
 		//--------Set up Canvas end-------

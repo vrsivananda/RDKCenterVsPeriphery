@@ -81,7 +81,7 @@ jsPsych.plugins["single-stim"] = (function() {
       //jsPsych.data.write(trial_data);
 
       // clear the display
-      display_element.html('');
+      //display_element.html('');
 
       // move on to the next trial
       jsPsych.finishTrial(trial_data);

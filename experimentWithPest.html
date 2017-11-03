@@ -7,6 +7,8 @@
 		 <script src = "jspsych-5.0.3/plugins/jspsych-RDK.js"></script> <!--Include the script for the RDK plugin-->
 		 <script src = "jspsych-5.0.3/plugins/jspsych-text.js"></script>
 		 <script src = "jspsych-5.0.3/plugins/jspsych-single-stim.js"></script>
+		 <script src = "jspsych-5.0.3/plugins/jspsych-survey-text.js"></script>
+		 <script src = "jspsych-5.0.3/plugins/jspsych-survey-multi-choice.js"></script>
 		 <link href = "jspsych-5.0.3/css/jspsych.css" rel = "stylesheet" type = "text/css"></link>
 		 <script src = "jspsych-5.0.3/plugins/jspsych-similarity.js"></script>
 		 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script> <!--For similarity plugin-->
@@ -19,8 +21,8 @@
 	<script>
 
 		//PARAMETERS
-		var trialDuration = 2000;
-		var trialsPerCondition = 1;
+		var trialDuration = 200;
+		var trialsPerCondition = 1; //Each "Condition" has 4 center, 2 left, and 2 right = 8 trials
 		var RDKType = 3;
 		var numberOfDots = 200;
 		var currentCoherence = 0.7; //Starting coherence
@@ -179,8 +181,10 @@
 		main_timeline = main_timeline.concat(practiceTrialsBlock); //Easy practice trials
 		main_timeline = main_timeline.concat(makeTextBeforeActualTrials()); //Transition to actual trials
 		main_timeline = main_timeline.concat(allActualTrials); //Actual trials
+		main_timeline = main_timeline.concat(makeSurvey()); //Survey
 		main_timeline = main_timeline.concat(makeTextAfterAllTrials()); //Transition to end the experiment
 		main_timeline = insertFixationCrossBeforeRDK(main_timeline); //Insert the fixation crosses before all RDKs
+		
 		
 		
 		
@@ -234,7 +238,7 @@
 				lineSkip + openText +
 				"Also, please note that you will not be allowed to proceed unless you drag the slider to the left or right of the middle. If the slider is not moved, you will not be able to continue to the next trial. If you are completely unsure of which direction the non-random dots moved, just make your best guess."	+
 				closeText + lineSkip + openText +
-				"The dots will be presented in either the middle (50% chance), or sides of the screen (25% left and 25% right). However, no matter where the dots are presented, it is <b>VERY IMPORTANT</b> that you <b>keep your eyes fixed to the center of the screen</b>. Before every trial, there will be a black fixation cross (+) in the middle of the screen. The cross will disappear when the dots are presented, but that is still the position where your eyes should be looking at." +
+				"The dots will be presented in either the middle (50% chance), or sides of the screen (25% left and 25% right). However, no matter where the dots are presented, it is <b>VERY IMPORTANT</b> that you <b>keep your eyes fixed to the center of the screen</b>. Before every trial, there will be a black fixation cross (+) in the middle of the screen. Make sure that you are looking at the fixation cross the entire time that it is on the screen." +
 				closeText + lineSkip + openText +
 				"Press any key to continue." +
 				closeText;
@@ -276,7 +280,7 @@
 				text: lineSkip + openText +
 					"Great work! Those were the practice trials with the dots in the center. There will also be trials where dots are near the sides of your screen. These trials are likely to be more difficult than those with the dots in the center." +
 					closeText + lineSkip + openText +
-					"We know it is tempting to look at the dots at the sides of the screen. But remember: Always start with your eyes at the fixation cross, and keep it there until the dots have disappeared from the screen." +
+					"We know it is tempting to look at the dots at the sides of the screen. But remember: Always start with your eyes at the fixation cross and keep it there until it disappears from the screen, even when the dots are being presented." +
 					closeText + lineSkip + openText +
 					"Remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
 					closeText + lineSkip + openText +
@@ -297,7 +301,7 @@
 				text: lineSkip + openText +
 					"Good job! On the actual experiment, you will not know where the dots will be presented. The next few practice trials will have dots being presented either in the center or at the sides." +
 					closeText + lineSkip + openText +
-					"Remember to keep your eyes in the middle of the screen (where the fixation cross was) no matter where the dots are being presented." +
+					"Remember to keep your eyes in the middle of the screen (where the fixation cross is) no matter where the dots are being presented." +
 					closeText + lineSkip + openText +
 					"Also, remember to use the entire range of the slider to indicate how confident you are in your decision. If you are completely unsure, just make your best guess." +
 					closeText + lineSkip + openText +
@@ -349,6 +353,43 @@
 			return textBeforeActualTrials;
 		}
 		
+		//Function to make survey after the trials
+		function makeSurvey(){
+			//Make the text to prompt for the survey
+			var textBeforeSurveyTrials = {
+				type: 'text',
+				timing_post_trial: timingPostTrialText,
+				text: lineSkip + openText +
+					"Awesome! You have completed the experiment." +
+					closeText + lineSkip + openText +
+					"We now have two simple questions to ask you. Your responses will not affect your compensation, so please be as honest as you can." +
+					closeText + lineSkip + openText +
+					"Press any key to continue." +
+					closeText
+			};
+			
+			//Make the gender survey
+			var genderSurvey = {
+				type: 'survey-multi-choice',
+				timing_post_trial: timingPostTrialText,
+				questions: ['What is your gender?'],
+				options: [['Male', 'Female', 'other', 'Wish not to answer']],
+				required: [[true]],
+				preamble: ['<h3> Question 1 </h3>']
+			};
+			
+			//Make the age survey
+			var ageSurvey = {
+				type: 'survey-text',
+				timing_post_trial: timingPostTrialText,
+				questions: ['What is your age?'],
+				columns: 5,
+				preamble: ['<h3> Question 2 </h3>']
+			};
+			
+			return [textBeforeSurveyTrials, genderSurvey, ageSurvey];
+		}
+		
 		//Function to make the text after all trials
 		function makeTextAfterAllTrials(){
 			
@@ -356,13 +397,13 @@
 				type: 'text',
 				timing_post_trial: timingPostTrialText,
 				text: lineSkip + openText +
-					"Well done! You have completed the experiment." +
+					"Well done! You are done with the entire task!" +
 					closeText + lineSkip + openText +
 					"Thank you very much for your time in participating in our experiment. Your participation will contribute to a greater understanding of the human visual system." +
 					closeText + lineSkip + openText +
-					"Press any key to officially end the experiment." +
+					"Press any key to officially end the experiment and submit your HIT." +
 					closeText
-			}
+			};
 			
 			return textBeforeActualTrials;
 		}
