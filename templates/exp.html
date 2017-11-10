@@ -42,8 +42,8 @@
 		
 		//Data switches
 		var psiTurkIsOn = 0;
-		var savingLocally = 0;
-		var displayOnScreen = 0;
+		var savingLocally = 1;
+		var displayData = 0;
 		var tableName = 'RDKCenterVsPeriphery';
 		var folderName = 'RDKCenterVsPeriphery';
 		
@@ -55,7 +55,8 @@
 
 		//PARAMETERS
 		var trialDuration = 200;
-		var trialsPerCondition = 1; //Each "Condition" has 4 center, 2 left, and 2 right = 8 trials
+		var trialsPerCondition = 25; //Each "Condition" has 4 center, 2 left, and 2 right = 8 trials
+		var numberOfBreaks = 1;
 		var RDKType = 3;
 		var apertureType = 1; //1 is circle, 2 is ellipse
 		var apertureWidth = 400; //If circle, this is used for radius
@@ -80,7 +81,7 @@
 		var numberOfEasyPracticeTrialsPeriphery = 4; //Must be divisible by 4 (left_left, left_right, right_left, right_right)
 		var numberOfEasyPracticeTrialsBoth = 4; //Must be even number (pair of left/right). Odd number will be rounded down to even.
 		var numberOfHardPracticeTrialsBoth = 4; //Must be even number (pair of left/right). Odd number will be rounded down to even.
-		var easyCorrectThreshold = 0; //If they get less than this value, kick them out
+		var easyCorrectThreshold = 8; //If they get less than this value, kick them out
 		var easyCorrectCounter = 0;
 		var hardCorrectCounter = 0;
 		
@@ -174,7 +175,6 @@
 		
 		var easyPracticeTrialsArrayBoth = makePracticeTrials("both","easy",numberOfEasyPracticeTrialsBoth); //Make the easy both practice trials
 		practiceTrialsBlock = practiceTrialsBlock.concat(easyPracticeTrialsArrayBoth);//Add in the easy both practice trials
-		practiceTrialsBlock = practiceTrialsBlock.concat(makeTextBetweenEasyAndHardPracticeTrials());//Add in the instructions in between
 		
 		
 		//--End Experiment Clause--
@@ -185,6 +185,7 @@
 		
 		//-----HARD TRIALS-----
 		
+		practiceTrialsBlock = practiceTrialsBlock.concat(makeTextBetweenEasyAndHardPracticeTrials());//Add in the instructions in between
 		var hardPracticeTrialsArrayBoth = makePracticeTrials("both","hard",numberOfHardPracticeTrialsBoth); //Make the hard both practice trials
 		practiceTrialsBlock = practiceTrialsBlock.concat(hardPracticeTrialsArrayBoth);//Add in the hard both practice trials
 				
@@ -207,6 +208,10 @@
 		//Add in the similarity plugin after each trial
 		var allActualTrials = interleaveSimilarityIntoTrials(randomizedActualTrials);
 		
+		//Add in the break screens for the actual trials
+		var allActualTrialsWithBreaks = addInBreaks(allActualTrials);
+		console.log(allActualTrialsWithBreaks);
+		
 		
 		//------Main Timeline------
 		
@@ -215,7 +220,7 @@
 		main_timeline = main_timeline.concat(makeInstructionsBlock()); //Instructions
 		main_timeline = main_timeline.concat(practiceTrialsBlock); //Easy practice trials
 		main_timeline = main_timeline.concat(makeTextBeforeActualTrials()); //Transition to actual trials
-		main_timeline = main_timeline.concat(allActualTrials); //Actual trials
+		main_timeline = main_timeline.concat(allActualTrialsWithBreaks); //Actual trials
 		main_timeline = main_timeline.concat(makeSurvey()); //Survey
 		main_timeline = insertFixationCrossBeforeRDK(main_timeline); //Insert the fixation crosses before all RDKs
 		
@@ -494,6 +499,61 @@
 			return [textBeforeSurveyTrials, genderSurvey, ageSurvey, textAfterSurveyTrials];
 		}
 		
+		//Function to add the break screens based on the number of screens
+		function addInBreaks(trialsArray){
+			
+			//Create the text string
+			var text = lineSkip + openText +
+				"Great work!" +
+				closeText + lineSkip + openText +
+				"You may now take a short 1-minute break to rest your eyes." +
+				closeText + lineSkip + openText +
+				"Remember to always look at the fixation cross in the center even though can be tempting to look elsewhere." +
+				closeText + lineSkip + openText +
+				"Whenever you are ready, press any key to continue with the experiment." +
+				closeText;
+			
+			//Add the space to the top	
+			text = addSpaceToTop(text);
+			
+			//Make it a trial object
+			var breakTrial = {
+				type: 'text',
+				text: text
+			}
+			
+			//Make an array of where to slot in the breaks
+			var breakPointsArray = [];
+			
+			//Fill in the array (start with 1 because no break at the front)
+			for(var i = 1; i <= numberOfBreaks; i++){
+				var breakPoint = Math.floor(i/(numberOfBreaks+1)*trialsArray.length);
+				breakPointsArray.push(breakPoint);
+			}
+			
+			//For loop to add the breaks. (Go backwards so that we don't need to account for previously spliced indices)
+			for(var i = numberOfBreaks-1; i > -1; i--){
+				
+				//Load in the current index to insert the break
+				var currentIndex = breakPointsArray[i];
+				
+				//Make sure that we are at the similarity trial to add in the break
+				while(trialsArray[currentIndex]["type"] !== 'RDK'){
+					//Go backwards because we tend to overshoot (index starts at 0)
+					currentIndex--;
+				}
+				
+				//Splice in the break
+				trialsArray.splice(currentIndex, 0, breakTrial)
+				
+			}
+			
+			//Return the spliced array
+			return trialsArray;
+			
+		}//End of addInBreaks
+		
+		
 		//Function to add space to the top of the text based on the window height
 		function addSpaceToTop(textString){
 			//The amount of space left to use
@@ -662,7 +722,7 @@
 					is_html: true,
 					stimuli: [fakeStimuli, fakeStimuli], //No stimuli for this plugin
 					timing_post_trial: timingPostTrialSimilarity,
-					labels: ["100%<br/>Completely certain - Left", "50%<br/>Just guessing", "100%<br/>Completely certain - Right"],
+					labels: ["100%<br/>Completely certain - Left", "50%|50%<br/>Purely guessing", "100%<br/>Completely certain - Right"],
 					timing_first_stim: 1, //Setting all the timings to zero so that we only use the timing_post_trial to control the timings
 					timing_image_gap: 1,
 					prompt: "<h4> Move the slider to show how confident you are in the direction of the dots.</h4>",
@@ -879,6 +939,8 @@
 		function addInEndExperimentClause(mixedArray){
 			
 			mixedArray[mixedArray.length-1].on_finish = function(){
+				console.log("Number correct: " + easyCorrectCounter);
+				console.log("Threshold: " + easyCorrectThreshold);
 				if(easyCorrectCounter < easyCorrectThreshold){
 					jsPsych.endExperiment(lineSkip + lineSkip + lineSkip + openText +
 						"Thank you for participating in this experiment." +
