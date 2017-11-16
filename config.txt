@@ -1,5 +1,5 @@
-﻿[HIT Configuration]
-title = Judge colors in different parts of your visual field!
+[HIT Configuration]
+title = Judge motion in different parts of your visual field!
 description = Make judgments about things in different locations on your computer’s screen
 amt_keywords = Perception, Psychology, experiment
 lifetime = 24
