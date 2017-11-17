@@ -39,12 +39,14 @@
 	</body>
 	<script>
 		
+
+		
 		
 		//Data switches
 		var psiTurkIsOn = 0;
 		var savingLocally = 1;
 		var displayData = 0;
-		var tableName = 'RDKCenterVsPeriphery';
+		var tableName = 'RDKCenterVsPeriphery2';
 		var folderName = 'RDKCenterVsPeriphery';
 		
 
@@ -133,6 +135,11 @@
 			aperture_type: apertureType,
 			aperture_height: apertureHeight,
 			aperture_width: apertureWidth,
+			on_finish: function(dataObject){
+				//Add the window data to the object
+				jsPsych.data.addDataToLastTrial({window_height: window.innerHeight});
+				jsPsych.data.addDataToLastTrial({window_width: window.innerWidth});
+			}
 		};
 		
 		
@@ -224,9 +231,17 @@
 		main_timeline = insertFixationCrossBeforeRDK(main_timeline); //Insert the fixation crosses before all RDKs
 		
 		
+		//-----Browser Info-----
+		
+		//Get the browser info
+		var browserInfo = getBrowserInfo(); 
+		
+		//Add the browser info
+		jsPsych.data.addProperties({browser: browserInfo.browser});
 		
 		
 		//---------Run the experiment---------
+		
 		
 		//Initiate the experiment
 		jsPsych.init({
@@ -252,11 +267,32 @@
 				}
 			}
 		});
+		
 
 		//=========================================
 		//========Functions below this line========
 		//=========================================
 		
+		
+		/* Jason's browser exclusion code so subjects only use Google Chrome */
+		function getBrowserInfo(){ 
+	       	var ua = navigator.userAgent, tem, 
+	        M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
+	        if(/trident/i.test(M[1])) 
+	        { 
+	            tem=  /\brv[ :]+(\d+)/g.exec(ua) || []; 
+	            return 'IE '+(tem[1] || ''); 
+	        } 
+	        if(M[1]=== 'Chrome') 
+	        { 
+	            tem= ua.match(/\b(OPR|Edge)\/(\d+)/); 
+	            if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera'); 
+	        } 
+	        M = M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?']; 
+	        if((tem= ua.match(/version\/(\d+)/i))!= null) 
+	            M.splice(1, 1, tem[1]); 
+	        return { 'browser': M[0], 'version': M[1] }; 
+		} 
 		
 		//------Text-creation Functions Begin-------
 		
@@ -270,6 +306,16 @@
 			//First page text
 			var text1 = header + 
 				lineSkip + openText +
+				"Thank you for choosing this experiment! Before we begin, we would like you to sit in a position that is best for your comfort and for our experiment. This is because we will be presenting stimuli in different parts of the screen and they need to align with your visual field." +
+				closeText + lineSkip + openText +
+				"Sit comfortably on your chair with your arm extended out to the center of the screen and your fist closed. When your arm is straight, your knuckles should be barely touching the screen. This is the ideal distance and do your best to keep your eyes around that distance to the screen. Make sure that you are able to look directly in the middle of the screen comfortably." +
+				closeText + lineSkip + openText +
+				"Once you are comfortable with the position, press any key to continue." +
+				closeText;
+			
+			//Second page text
+			var text2 = header + 
+				lineSkip + openText +
 				"You will be presented with a collection of moving dots either in the middle or near the sides of the screen. Some of them will be moving randomly (random dots) and others will all be moving to the left or right at the same speed (non-random dots). Your task is to determine in which direction the non-random dots are moving (left or right)." +
 				closeText + lineSkip + openText +
 				"The proportion of dots that move randomly will range from 0% of the total dots to 100% of the dots. Thus some trials will be easy to judge, but other trials will be more difficult. Try to be as accurate as possible on all trials, even the difficult ones!" +
@@ -277,8 +323,8 @@
 				"Press any key to continue." +
 				closeText;
 				
-			//Second page text	
-			var text2 = header + 
+			//Third page text	
+			var text3 = header + 
 				lineSkip + openText +
 				"After 0.2 seconds, the dots will disappear and a slider will show up on the screen. The initial position of the slider will be in the middle. Drag the slider to the left if you think the dots moved to the left. Drag the slider to the right if you think the dots moved to the right." +
 				closeText + lineSkip + openText +
@@ -287,8 +333,8 @@
 				"Press any key to continue." +
 				closeText;
 				
-			//Third page text	
-			var text3 = header +
+			//Fourth page text	
+			var text4 = header +
 				lineSkip + openText +
 				"Also, please note that you will not be allowed to proceed unless you drag the slider to the left or right of the middle. If the slider is not moved, you will not be able to continue to the next trial. If you are completely unsure of which direction the non-random dots moved, just make your best guess."	+
 				closeText + lineSkip + openText +
@@ -297,8 +343,8 @@
 				"Press any key to continue." +
 				closeText;
 			
-			//Fourth page text	
-			var text4 = header +
+			//Fifth page text	
+			var text5 = header +
 				lineSkip + openText +
 				"You will be given a few practice trials before the start of the actual experiment. Make sure that you take the time to understand the task and are comfortable with the layout of the screen." +
 				closeText + lineSkip + openText +
@@ -314,6 +360,7 @@
 			text2 = addSpaceToTop(text2);
 			text3 = addSpaceToTop(text3);
 			text4 = addSpaceToTop(text4);
+			text5 = addSpaceToTop(text5);
 			
 			//The block of instructions containing all the pages of text above
 			var instructions_block = {
@@ -323,7 +370,8 @@
 					{text: text1},
 					{text: text2},
 					{text: text3},
-					{text: text4}
+					{text: text4},
+					{text: text5}
 				]
 			};
 			
