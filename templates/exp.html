@@ -48,6 +48,8 @@
 		var displayData = 0;
 		var tableName = 'RDKCenterVsPeriphery2';
 		var folderName = 'RDKCenterVsPeriphery';
+		var serverName = '';
+		var accountName = '';
 		
 
 		// Load psiturk
@@ -1020,7 +1022,7 @@
 			$.ajax({
 				type:'post',
 				cache: false,
-				url: 'https://psiturk.psych.ucla.edu/~odegaard/' + folderName + '/templates/savedata.php',
+				url: 'https://'+ serverName + '.psych.ucla.edu/~' + accountName + '/' + folderName + '/templates/savedata.php',
 				data: {
 					table: data_table,
 					json: JSON.stringify(data),
