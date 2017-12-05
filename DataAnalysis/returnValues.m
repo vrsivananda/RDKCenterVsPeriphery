@@ -1,5 +1,5 @@
-% This function returns the values of the cell array where the contents match the
-% target value
+% This function returns the values of the cell array where at those
+% specific indices
 
 function valuesArray = returnValues(cellArray, indicesArray)
 
@@ -17,6 +17,8 @@ for i = 1:length(indicesArray)
     if(ischar(cellArray{currentIndex}))
        valuesArray(i,1) = str2double(cellArray{currentIndex});
     end
+    
+    
     
 end
 

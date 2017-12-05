@@ -43,8 +43,8 @@
 		
 		
 		//Data switches
-		var psiTurkIsOn = 0;
-		var savingLocally = 1;
+		var psiTurkIsOn = 1;
+		var savingLocally = 0;
 		var displayData = 0;
 		var tableName = 'RDKCenterVsPeriphery2';
 		var folderName = 'RDKCenterVsPeriphery';
@@ -60,7 +60,7 @@
 		//PARAMETERS
 		var trialDuration = 200;
 		var trialsPerCondition = 25; //Each "Condition" has 4 center, 2 left, and 2 right = 8 trials
-		var numberOfBreaks = 1;
+		var numberOfBreaks = 4;
 		var RDKType = 3;
 		var apertureType = 1; //1 is circle, 2 is ellipse
 		var apertureWidth = 400; //If circle, this is used for radius
@@ -109,6 +109,9 @@
 		var fixationCrossColor = "black"; //The color of the fixation cross
 		var fixationCrossThickness = 1; //The thickness of the fixation cross, must be positive number above 1
 		
+		//TrialCounter for debugging
+		var trialCounter = 0;
+		
 		//Create the parameter object for PEST
 		var pestParameters = {
 			starting_intensity: currentCoherence,
@@ -141,6 +144,9 @@
 				//Add the window data to the object
 				jsPsych.data.addDataToLastTrial({window_height: window.innerHeight});
 				jsPsych.data.addDataToLastTrial({window_width: window.innerWidth});
+				//Increment the trial counter and log it onto the console
+				trialCounter++;
+				console.log(trialCounter);
 			}
 		};
 		
@@ -153,8 +159,6 @@
 		//Global variable to transer the correct variable from Similarity trial data to Fixation cross trial data
 		var transferCorrect1;
 		var transferCorrect2;
-		
-		var trialCounter = 0; //[sivaHack]
 		
 		//Change the body element to be the same color as the stimuli background
 		document.getElementsByTagName("body")[0].style.background = "gray";
