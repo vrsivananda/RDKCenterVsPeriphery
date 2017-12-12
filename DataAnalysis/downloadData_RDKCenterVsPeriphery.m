@@ -17,7 +17,7 @@ conn = database('psych_qualia',databaseName,databasePassword,'Vendor','MySQL',..
 
 
 % Then, load a text file that lists all of the subjects.
-path='RDKCenterVsPeriphery_Subjects.txt';
+path='RDKCenterVsPeriphery_Subjects_All.txt';
 % Make an ID for the subject list file
 subjectListFileId=fopen(path);
 % Read in the number from the subject list

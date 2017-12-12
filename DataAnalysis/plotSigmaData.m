@@ -7,14 +7,14 @@ legendCellArray = cell(length(psySigma20),1);
 for i = 1:length(psySigma20)
    
     % Plot the data
-    plot([1,2,3,4],[psySigma20(i), psySigma100(i), CSDSigma20(i), CSDSigma100(i)],'Marker','.','MarkerSize',20,'LineWidth',3);
+    plot([1,2,3,4],[psySigma20(i), psySigma100(i), CSDSigma20(i), CSDSigma100(i)],'Marker','.','MarkerSize',5,'LineWidth',0.5);
     legendCellArray{i} = ['Subject: ' num2str(i)];
     hold on;
     
 end
 
 % Set the legend
-legend(legendCellArray,'location','northeast');
+%legend(legendCellArray,'location','northeast');
 
 % Set the y-limits
 ylim([-0.5,3.5]);
