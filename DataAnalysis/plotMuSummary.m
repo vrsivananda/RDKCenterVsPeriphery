@@ -6,7 +6,7 @@ psyMu100Mean = mean(psyMu100);
 CSDMu20Mean = mean(CSDMu20);
 CSDMu100Mean = mean(CSDMu100);
 
-%Calculate the standard error of the data
+% Calculate the standard error of the data
 psyMu20SE = std(psyMu20)/sqrt(length(psyMu20));
 psyMu100SE = std(psyMu100)/sqrt(length(psyMu100));
 CSDMu20SE = std(CSDMu20)/sqrt(length(CSDMu20));

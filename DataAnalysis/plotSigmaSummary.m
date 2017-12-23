@@ -22,7 +22,7 @@ ylim([0,1]);
 % Set the x-limits
 xlim([0,5]);
 % Specify where to show the tick
-xticks([1,2,3,4]);
+xticks([1,2,3,4,5]);
 % Get rid of the tick labels
 set(gca,'xticklabel',[])
 
