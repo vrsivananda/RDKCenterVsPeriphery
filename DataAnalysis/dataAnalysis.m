@@ -15,6 +15,30 @@ numberOfSubjects = fscanf(subjectListFileId,'%d');
 
 %-----Prepare arrays to store data-----
 
+% Store for age and gender
+ages = [];
+genders = '';
+
+% Store for d'
+dPrimeCenter = [];
+dPrimePeriphery = [];
+
+% Store for d' converged
+dPrimeConvergedCenter = [];
+dPrimeConvergedPeriphery = [];
+
+% Store for c
+confidenceCenter = [];
+confidencePeriphery = [];
+
+% Store for c converged
+confidenceConvergedCenter = [];
+confidenceConvergedPeriphery = [];
+
+% Store for meta-d'
+mRatioCenter = [];
+mRatioPeriphery = [];
+
 % Store for Psy Mu
 centerPsyMu20 = [];
 peripheryPsyMu20 = [];
@@ -286,8 +310,7 @@ for i = 1:numberOfSubjects
             % If the values meet our exclusion criteria, then we discard
             % them
             if(discardDataCenter20 || discardDataCenter40 || discardDataCenter60 || discardDataCenter80 || discardDataCenter100 ||...
-                    discardDataPeriphery20 || discardDataPeriphery40 || discardDataPeriphery60 || discardDataPeriphery80 || discardDataPeriphery100)
-%             if(false)    
+                    discardDataPeriphery20 || discardDataPeriphery40 || discardDataPeriphery60 || discardDataPeriphery80 || discardDataPeriphery100)  
                 %Increment the counters and save the subjectID
                 nDiscardedSubjects = nDiscardedSubjects + 1;
                 nDiscardedBadCurve = nDiscardedBadCurve + 1;
@@ -298,6 +321,70 @@ for i = 1:numberOfSubjects
             
                 % Increment the number of valid subjects counter
                 nValidSubjects = nValidSubjects + 1;
+                
+                % Get the demographic data for the subject
+                [ages(nValidSubjects), genders(nValidSubjects)] = getDemographicData(dataStructure);
+                
+                %----Calculate d' for the subject----
+                
+                % Calculate d'
+                dPrimes = calculateDPrime(dataStructure);
+                % In the form:
+                % 1st row: dPrimeCenter
+                % 2nd row: dPrimePeriphery
+                
+                % Save d' data
+                dPrimeCenter(length(dPrimeCenter)+1) = dPrimes(1);
+                dPrimePeriphery(length(dPrimePeriphery)+1) = dPrimes(2);
+                
+                %----Calculate d' using converged data for the subject----
+                
+                % Calculate d' converged
+                dPrimesConverged = calculateDPrimeConverged(dataStructure);
+                % In the form:
+                % 1st row: dPrimeCenter converged
+                % 2nd row: dPrimePeriphery converged
+                
+                % Save d' converged data
+                dPrimeConvergedCenter(length(dPrimeConvergedCenter)+1) = dPrimesConverged(1);
+                dPrimeConvergedPeriphery(length(dPrimeConvergedPeriphery)+1) = dPrimesConverged(2);
+                
+                
+                %----Calculate confidence for the subject----
+                
+                % Calculate confidence
+                confidences = calculateConfidence(dataStructure);
+                % In the form:
+                % 1st row: meanConfidenceCenter
+                % 2nd row: meanConfidencePeriphery
+                
+                % Save confidence data
+                confidenceCenter(length(confidenceCenter)+1) = confidences(1);
+                confidencePeriphery(length(confidencePeriphery)+1) = confidences(2);
+                
+                
+                %----Calculate confidence converged for the subject----
+                
+                % Calculate confidence converged
+                confidencesConverged = calculateConfidenceConverged(dataStructure);
+                % In the form:
+                % 1st row: meanConfidenceConvergedCenter
+                % 2nd row: meanConfidenceConvergedPeriphery
+                
+                % Save confidence data
+                confidenceConvergedCenter(length(confidenceConvergedCenter)+1) = confidencesConverged(1);
+                confidenceConvergedPeriphery(length(confidenceConvergedPeriphery)+1) = confidencesConverged(2);
+                
+                
+                %----Calculate meta-d' for the subject----
+                
+                % Calculate meta-d'
+                metaDPrimeCellArray = calculateMetaDPrime(dataStructure);
+                
+                % Save the meta-d' MRatio data
+                mRatioCenter(length(mRatioCenter)+1) = metaDPrimeCellArray{1}.M_ratio;
+                mRatioPeriphery(length(mRatioPeriphery)+1) = metaDPrimeCellArray{2}.M_ratio;
+                
                 
                 %----Sava data for JSCSD----
                 
@@ -390,7 +477,7 @@ for i = 1:numberOfSubjects
             
         end % End of if-else statement that checks if data is complete
     end % End of if-else statement that checks for practice trials
-end
+end % End of for loop that loops through all subjects
 
 close all;
 
@@ -514,3 +601,18 @@ legend([line1,line2'],{'Psy','CSD'});
 % % Plot the K for the periphery
 % figure;
 % plotKData(peripheryCSDK20, peripheryCSDK100);
+
+% --------- d' Analysis ----------
+analyzeDPrime(dPrimeCenter,dPrimePeriphery);
+
+% --------- d' Converged Analysis ----------
+analyzeDPrime(dPrimeConvergedCenter,dPrimeConvergedPeriphery);
+
+% --------- Confidence Analysis ----------
+analyzeConfidence(confidenceCenter,confidencePeriphery);
+
+% --------- Confidence Converged Analysis ----------
+analyzeConfidence(confidenceConvergedCenter,confidenceConvergedPeriphery);
+
+% --------- mRatio Analysis ----------
+analyzeMRatio(mRatioCenter, mRatioPeriphery);
