@@ -20,9 +20,6 @@ numberOfSubjects = fscanf(subjectListFileId,'%d');
 ages = [];
 genders = '';
 
-% Store for ending center coherence
-endingCoherence = [];
-
 % Store for d'
 dPrimeCenter = [];
 dPrimePeriphery = [];
@@ -330,7 +327,7 @@ for i = 1:numberOfSubjects
                 [ages(nValidSubjects), genders(nValidSubjects)] = getDemographicData(dataStructure);
                 
                 % Get the ending center coherence of the subject
-                endingCoherence(nValidSubjects) = str2num(dataStructure.coherence{max(find(strcmp(dataStructure.positionType,'center')))-1});
+                endingCoherence(nValidSubjects) = dataStructure.coherence{max(find(strcmp(dataStructure.positionType,'center')))-1};
                 
                 %----Calculate d' for the subject----
                 
@@ -623,8 +620,3 @@ analyzeConfidence(confidenceConvergedCenter,confidenceConvergedPeriphery);
 
 % --------- mRatio Analysis ----------
 analyzeMRatio(mRatioCenter, mRatioPeriphery);
-
-% --------- Ending Coherence Analysis ----------
-analyzeEndingCoherence(endingCoherence);
-
-
