@@ -2,9 +2,6 @@ function analyzeEndingCoherence(endingCoherence)
     
     % Add path to the beeswarm functions
     addpath('plotSpread/plotSpread');
-    data = {randn(25,1),randn(100,1),randn(300,1)};
-    figure;
-    plotSpread(data);
     
     % Parameters
     barColor = [0.7, 0.7, 0.7];

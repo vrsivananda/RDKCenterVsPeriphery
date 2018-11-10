@@ -6,6 +6,7 @@ saveStaircase = 0;
 
 % Add the path to the data folder so that MATLAB can access it
 addpath([pwd '/Data']);
+addpath([pwd '/MatlabCSD']);
 
 % Create a path to the text file with all the subjects
 path='RDKCenterVsPeriphery_Subjects_All.txt';
@@ -239,23 +240,23 @@ for i = 1:numberOfSubjects
             
             % Invoke the CSD for 20 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            centerCSD20Trials = startCSD(actualCenterFixedCoherence(1:20), actualCenterBinaryChoice(1:20), actualCenterConfidenceJudgment(1:20));
+            centerCSD20Trials = startCSD(actualCenterFixedCoherence(1:20), actualCenterConfidenceJudgment(1:20));
             
             % Invoke the CSD for 40 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            centerCSD40Trials = startCSD(actualCenterFixedCoherence(1:40), actualCenterBinaryChoice(1:40), actualCenterConfidenceJudgment(1:40));
+            centerCSD40Trials = startCSD(actualCenterFixedCoherence(1:40), actualCenterConfidenceJudgment(1:40));
             
             % Invoke the CSD for 60 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            centerCSD60Trials = startCSD(actualCenterFixedCoherence(1:60), actualCenterBinaryChoice(1:60), actualCenterConfidenceJudgment(1:60));
+            centerCSD60Trials = startCSD(actualCenterFixedCoherence(1:60), actualCenterConfidenceJudgment(1:60));
             
             % Invoke the CSD for 80 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            centerCSD80Trials = startCSD(actualCenterFixedCoherence(1:80), actualCenterBinaryChoice(1:80), actualCenterConfidenceJudgment(1:80));
+            centerCSD80Trials = startCSD(actualCenterFixedCoherence(1:80), actualCenterConfidenceJudgment(1:80));
 
             % Invoke the CSD for 100 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            centerCSD100Trials = startCSD(actualCenterFixedCoherence, actualCenterBinaryChoice, actualCenterConfidenceJudgment);
+            centerCSD100Trials = startCSD(actualCenterFixedCoherence, actualCenterConfidenceJudgment);
             
             
             % ----PERIPHERY----
@@ -274,29 +275,23 @@ for i = 1:numberOfSubjects
             
             % Invoke the CSD for 20 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            peripheryCSD20Trials = startCSD(actualPeripheryFixedCoherence(1:20), actualPeripheryBinaryChoice(1:20), actualPeripheryConfidenceJudgment(1:20));
+            peripheryCSD20Trials = startCSD(actualPeripheryFixedCoherence(1:20), actualPeripheryConfidenceJudgment(1:20));
             
             % Invoke the CSD for 40 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            peripheryCSD40Trials = startCSD(actualPeripheryFixedCoherence(1:40), actualPeripheryBinaryChoice(1:40), actualPeripheryConfidenceJudgment(1:40));
+            peripheryCSD40Trials = startCSD(actualPeripheryFixedCoherence(1:40), actualPeripheryConfidenceJudgment(1:40));
             
             % Invoke the CSD for 60 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            peripheryCSD60Trials = startCSD(actualPeripheryFixedCoherence(1:60), actualPeripheryBinaryChoice(1:60), actualPeripheryConfidenceJudgment(1:60));
+            peripheryCSD60Trials = startCSD(actualPeripheryFixedCoherence(1:60), actualPeripheryConfidenceJudgment(1:60));
             
             % Invoke the CSD for 80 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            peripheryCSD80Trials = startCSD(actualPeripheryFixedCoherence(1:80), actualPeripheryBinaryChoice(1:80), actualPeripheryConfidenceJudgment(1:80));
+            peripheryCSD80Trials = startCSD(actualPeripheryFixedCoherence(1:80), actualPeripheryConfidenceJudgment(1:80));
             
             % Invoke the CSD for 100 trials
             % Returns [mu, sigma, k, finalMu, finalSigma, finalK]
-            peripheryCSD100Trials = startCSD(actualPeripheryFixedCoherence, actualPeripheryBinaryChoice, actualPeripheryConfidenceJudgment);
-            
-            % Checking for obscene K values [delete if unnecessary]
-%             if(peripheryCSD20Trials(6) > 10)
-%                disp(subjectId);
-%                disp(peripheryCSDK20(nValidSubjects));
-%             end
+            peripheryCSD100Trials = startCSD(actualPeripheryFixedCoherence, actualPeripheryConfidenceJudgment);
             
             % Run the tests on our data to see if we need to discard the it
             discardDataCenter20 = discardDataTest(centerCSD20Trials);
